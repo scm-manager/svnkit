@@ -9,33 +9,36 @@
  * newer version instead, at your option.
  * ====================================================================
  */
-package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
+ package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import org.apache.sshd.client.channel.ChannelExec;
+import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.session.ClientSession;
+import org.tmatesoft.svn.core.internal.io.svn.ssh.SshSession;
+
+import java.io.*;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.sshd.client.channel.ChannelExec;
-import org.apache.sshd.client.channel.ClientChannelEvent;
-import org.tmatesoft.svn.core.internal.io.svn.ssh.SshSession;
-
 public class ApacheSshSession implements SshSession {
+
     private static final Logger log = Logger.getLogger(ApacheSshSession.class.getName());
-    private final SshConnection connection;
+    private SshConnection connection;
     private ChannelExec channel;
     private PipedInputStream out;
     private PipedInputStream err;
     private PipedOutputStream in;
+    private static int execCount;
 
     public ApacheSshSession(SshConnection connection) {
         this.connection = connection;
     }
-    
+
+    public static int getExecCount() {
+        return execCount;
+    }
+
     public void close() {
         if (channel != null) {
             try {
@@ -76,6 +79,17 @@ public class ApacheSshSession implements SshSession {
     }
 
     public void execCommand(String command) throws IOException {
+        execCount++;
+        try {
+            tryExecCommand(command);
+        } catch (Exception e) {
+            close();
+            connection = connection.reOpen();
+            tryExecCommand(command);
+        }
+    }
+
+    private void tryExecCommand(String command) throws IOException {
         channel = connection.getSession().createExecChannel(command);
         out = new PipedInputStream();
         channel.setOut(new PipedOutputStream(out));
@@ -84,10 +98,22 @@ public class ApacheSshSession implements SshSession {
         in = new PipedOutputStream();
         channel.setIn(new PipedInputStream(in));
         channel.open().await();
-        log.info("Opened connection with "+command);
+        log.finest(() -> "Opened connection with " + command);
     }
-    
+
+    /**
+     * This doesn't really ping the server, because that's slow and useless anyway as we can silently re-connect to the server
+     * in case we end up in a race-condition where the server has closed the connection between the call to ping() and
+     * the call to execCommand()
+     */
     public void ping() throws IOException {
-        // TODO
+        final ClientSession session = connection.getSession();
+        if (!session.isOpen()) {
+            throw new IOException("Session is not open");
+        }
+
+        if (session.isClosing()) {
+            throw new IOException("Session is closing");
+        }
     }
 }

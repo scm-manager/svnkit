@@ -9,13 +9,7 @@
  * newer version instead, at your option.
  * ====================================================================
  */
-package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+ package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
 
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.config.hosts.DefaultConfigFileHostEntryResolver;
@@ -25,6 +19,12 @@ import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.io.nio2.Nio2ServiceFactoryFactory;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.tmatesoft.svn.core.SVNException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SshConnection {
     private static final Logger log = Logger.getLogger(SshConnection.class.getName());
@@ -121,5 +121,15 @@ public class SshConnection {
 
     public ClientSession getSession() {
         return session;
+    }
+
+    public SshConnection reOpen() throws IOException {
+        try {
+            return new SshConnection(host);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException("Failed to reopen connection");
+        }
     }
 }
