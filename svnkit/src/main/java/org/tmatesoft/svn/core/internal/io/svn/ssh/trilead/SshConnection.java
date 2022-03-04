@@ -1,4 +1,15 @@
-package org.tmatesoft.svn.core.internal.io.svn.ssh;
+/*
+ * ====================================================================
+ * Copyright (c) 2004-2022 TMate Software Ltd.  All rights reserved.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution.  The terms
+ * are also available at http://svnkit.com/license.html.
+ * If newer versions of this license are posted there, you may use a
+ * newer version instead, at your option.
+ * ====================================================================
+ */
+package org.tmatesoft.svn.core.internal.io.svn.ssh.trilead;
 
 import java.io.IOException;
 
@@ -18,16 +29,16 @@ public class SshConnection {
         myLastAccessTime = System.currentTimeMillis();
     }
     
-    public SshSession openSession() throws IOException {
+    public TrileadSshSession openSession() throws IOException {
         Session session = myConnection.openSession();
         if (session != null) {
             mySessionCount++;
-            return new SshSession(this, session);
+            return new TrileadSshSession(this, session);
         }
         return null;
     }
 
-    public void sessionClosed(SshSession sshSession) {
+    public void sessionClosed(TrileadSshSession sshSession) {
         myHost.lock();
         try {
             myLastAccessTime = System.currentTimeMillis();

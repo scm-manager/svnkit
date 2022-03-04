@@ -9,7 +9,7 @@
  * newer version instead, at your option.
  * ====================================================================
  */
-package org.tmatesoft.svn.core.internal.io.svn.ssh;
+package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
 
 import java.io.IOException;
 

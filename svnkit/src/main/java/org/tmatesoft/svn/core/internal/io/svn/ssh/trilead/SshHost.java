@@ -1,14 +1,26 @@
-package org.tmatesoft.svn.core.internal.io.svn.ssh;
-
-import com.trilead.ssh2.Connection;
-import com.trilead.ssh2.InteractiveCallback;
-import com.trilead.ssh2.ServerHostKeyVerifier;
-import com.trilead.ssh2.auth.AgentProxy;
+/*
+ * ====================================================================
+ * Copyright (c) 2004-2022 TMate Software Ltd.  All rights reserved.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution.  The terms
+ * are also available at http://svnkit.com/license.html.
+ * If newer versions of this license are posted there, you may use a
+ * newer version instead, at your option.
+ * ====================================================================
+ */
+package org.tmatesoft.svn.core.internal.io.svn.ssh.trilead;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.trilead.ssh2.Connection;
+import com.trilead.ssh2.InteractiveCallback;
+import com.trilead.ssh2.ServerHostKeyVerifier;
+import com.trilead.ssh2.auth.AgentProxy;
+import org.tmatesoft.svn.core.internal.io.svn.ssh.SshAuthenticationException;
 
 public class SshHost {
     
@@ -138,8 +150,8 @@ public class SshHost {
         }
     }
     
-    public SshSession openSession() throws IOException {
-        SshSession session = useExistingConnection();
+    public TrileadSshSession openSession() throws IOException {
+        TrileadSshSession session = useExistingConnection();
         if (session != null) {
             return session;
         }        
@@ -171,7 +183,7 @@ public class SshHost {
         throw new IOException("Cannot establish SSH connection with " + myHost + ":" + myPort);
     }
 
-    private SshSession useExistingConnection() throws IOException {
+    private TrileadSshSession useExistingConnection() throws IOException {
         lock();
         try {
             if (isDisposed()) {
