@@ -1,4 +1,10 @@
+== version 1.10.5  ==
+
++ SVNKIT-763: JVM property tell SVNKit that 'mtime' microsecond precision is [not] supported.
++ SVNKIT-759: Apache sshd based implementation for svn+ssh:// protocol as an alternative to trilead.
+
 == version 1.10.4  ==
+
 + SVNKIT-758: path are now URL-encoded before sending DELETE http request via HttpV2 protocol.
 + SVNKIT-760: Incorrect out-of-date error when committing over HTTP from a working copy, fixed.
 + SVNKIT-761: Reflective access issues with Java 9 solved in ClientException.
