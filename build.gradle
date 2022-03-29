@@ -2,7 +2,7 @@ group = 'org.tmatesoft.svnkit'
 version = '1.10.5'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+    gradleVersion = '2.14'
 }
 
 def javaProjects() {
