@@ -11,6 +11,12 @@
  */
  package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.config.hosts.DefaultConfigFileHostEntryResolver;
 import org.apache.sshd.client.future.ConnectFuture;
@@ -19,12 +25,7 @@ import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.io.nio2.Nio2ServiceFactoryFactory;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.tmatesoft.svn.core.SVNException;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.tmatesoft.svn.core.auth.ISVNSSHHostVerifier;
 
 public class SshConnection {
     private static final Logger log = Logger.getLogger(SshConnection.class.getName());
@@ -68,7 +69,10 @@ public class SshConnection {
 
         client.setServerKeyVerifier((clientSession, remoteAddress, serverKey) -> {
             try {
-                host.getHostVerifier().verifyHostKey(host.getHostName(), host.getPort(), serverKey.getAlgorithm(), serverKey.getEncoded());
+                final ISVNSSHHostVerifier verifier = host.getHostVerifier();
+                if (verifier != null) {
+                    verifier.verifyHostKey(host.getHostName(), host.getPort(), serverKey.getAlgorithm(), serverKey.getEncoded());
+                }
                 return true;
             } catch (SVNException e) {
                 log.log(Level.SEVERE, "Failed while verifying host key: " + host.getKey(), e);
