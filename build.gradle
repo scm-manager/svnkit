@@ -44,7 +44,6 @@ allprojects {
 subprojects {
     apply plugin : 'base'
     apply plugin : 'maven'
-    apply plugin : 'signing'
 
     version = rootProject.version
 
@@ -63,31 +62,14 @@ subprojects {
        buildNumber = rootProject.buildNumber
     }
 
-    signing {
-        required { project.hasProperty('signing.keyId') }
-        sign configurations.archives
-    }
-
     uploadArchives {
-        dependsOn signArchives
         enabled = false
         repositories.mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            if (project.hasProperty('mavenReleasesRepository')) {
-                repository( url : "${mavenReleasesRepository}") {
-                    if (project.hasProperty('mavenUser')) {
-                        authentication(userName: "${mavenUser}", password: "${mavenPassword}")
-                    }
-                }
+            repository( url : "https://packages.scm-manager.org/repository/releases/") {
+                authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)
             }
-
-            if (project.hasProperty('mavenSnapshotsRepository')) {
-                snapshotRepository( url : "${mavenSnapshotsRepository}") {
-                    if (project.hasProperty('mavenUser')) {
-                        authentication(userName: "${mavenUser}", password: "${mavenPassword}")
-                    }
-                }
+            snapshotRepository( url : "https://packages.scm-manager.org/repository/snapshots/") {
+                authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)
             }
         }
     }
