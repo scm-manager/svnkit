@@ -1,5 +1,5 @@
 group = 'sonia.svnkit'
-version = '1.10.3'
+version = '1.10.3-scm2'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
@@ -10,7 +10,7 @@ def javaProjects() {
 }
 
 ext {
-   release = project.hasProperty('release')
+   release = true
    target = '1.6'
    compatibleSvnVersion = '1.10.0'
 
@@ -21,9 +21,6 @@ ext {
    if (buildNumber == null) {
         def buildTime = new java.text.SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.US).format(new Date())
         buildNumber = (release ? 'snapshot' : 't') + buildTime
-        if (release) {
-            rootProject.version = rootProject.version + '-' + buildNumber
-        }
    }
    println "Version: ${rootProject.version}"
    println "Build Number: ${rootProject.buildNumber}"
@@ -63,7 +60,7 @@ subprojects {
     }
 
     uploadArchives {
-        enabled = false
+        enabled = true
         repositories.mavenDeployer {
             repository( url : "https://packages.scm-manager.org/repository/releases/") {
                 authentication(userName: packagesScmManagerUsername, password: packagesScmManagerPassword)

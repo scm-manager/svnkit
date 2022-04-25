@@ -39,7 +39,7 @@ jar {
         if (rootProject.release && rootProject.buildNumber.startsWith("snapshot")) {
             bundleVersion = rootProject.version.replace('-snapshot', '.snapshot').replace('-', '.')
         } else {
-            bundleVersion = rootProject.version.replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
+            bundleVersion = rootProject.version.replaceFirst('-scm[0-9]+', '').replace('-SNAPSHOT', '.SNAPSHOT').replace('-', '.') + (rootProject.release ? '.' : '_') + buildNumber
         }
         bundleVendor = 'TMate Software'
 
