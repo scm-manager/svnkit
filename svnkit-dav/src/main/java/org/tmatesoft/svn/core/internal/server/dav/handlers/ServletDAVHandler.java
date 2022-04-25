@@ -540,7 +540,8 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
             }
         }
         
-        ISVNDeltaConsumer deltaConsumer = getDeltaConsumer(root, committer, fsfs, resource.getUserName(), resource.getLockTokens());
+        FSDeltaConsumer deltaConsumer = getDeltaConsumer(root, committer, fsfs, resource.getUserName(), resource.getLockTokens());
+        deltaConsumer.setComputeChecksum(resource.getResultChecksum() != null);
         try {
             deltaConsumer.applyTextDelta(path, resource.getBaseChecksum());
         } catch (SVNException svne) {

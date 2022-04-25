@@ -98,7 +98,7 @@ public class DAVPutHandler extends ServletDAVHandler {
             Collection lockTokens = resource.getLockTokens();
             String userName = resource.getUserName();
             FSCommitter committer = getCommitter(fsfs, root, txn, lockTokens, userName);
-            ISVNDeltaConsumer deltaConsumer = getDeltaConsumer(root, committer, fsfs, userName, lockTokens);
+            FSDeltaConsumer deltaConsumer = getDeltaConsumer(root, committer, fsfs, userName, lockTokens);
             SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
             InputStream inputStream = null;
             try {
@@ -134,6 +134,15 @@ public class DAVPutHandler extends ServletDAVHandler {
                         error = error2;
                     }
                     deltaConsumer.textDeltaEnd(path);
+                }
+
+                String expectedChecksum = resource.getResultChecksum();
+                String computedChecksum = deltaConsumer.getChecksum();
+                if (expectedChecksum != null && !expectedChecksum.equals(computedChecksum)) {
+                    SVNErrorMessage err = SVNErrorMessage.create(SVNErrorCode.CHECKSUM_MISMATCH, "Client checksum mismatch on ''{0}'':\n   expected:  {1}\n     actual:  {2}\n", new Object[] {
+                            path, expectedChecksum, computedChecksum
+                    });
+                    SVNErrorManager.error(err, SVNLogType.NETWORK);
                 }
             }
             final String actualChecksum = ((FSDeltaConsumer) deltaConsumer).getChecksum();

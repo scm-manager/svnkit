@@ -51,3 +51,7 @@ svnkit/src/main/java/org/tmatesoft/svn/util/SVNTest.java
 svnkit/src/test/java/org/tmatesoft/svn/test/test.properties
 svnkit/src/test/resources/org/tmatesoft/svn/test/test.properties
 svnkit/target
+.vscode
+.settings
+.project
+/debug.sh
