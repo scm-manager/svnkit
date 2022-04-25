@@ -277,11 +277,13 @@ public class FSFile {
                 try {
                     properties.put(key, myDecoder.decode(myReadLineBuffer).toString());
                 } catch (CharacterCodingException cce) {
-                    if (allowBinaryValues){
+                    if (allowBinaryValues || CustomFSConfiguration.getInstance().isAlwaysAllowBinaryProperties()){
                         byte[] dst = new byte[limit - pos];
                         myReadLineBuffer.position(pos);
                         myReadLineBuffer.get(dst);
                         properties.put(key, dst);                                                
+                    } else if (CustomFSConfiguration.getInstance().isIgnoreInvalidEncodedProperties()) {
+                        SVNDebugLog.getDefaultLog().log(SVNLogType.FSFS, "ignore undecodable line: " + line, Level.WARNING);
                     } else {
                         SVNErrorMessage error = SVNErrorMessage.create(SVNErrorCode.FS_CORRUPT, "File ''{0}'' contains unexpected binary property value", getFile());
                         SVNErrorManager.error(error, cce, SVNLogType.DEFAULT);
