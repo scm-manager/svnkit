@@ -282,8 +282,6 @@ public class DAVRepositoryManager {
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || "".equals(pathInfo)) {
             pathInfo = "/";
-        } else {
-          pathInfo = SVNEncodingUtil.uriDecode(pathInfo);
         }
         
         if (getDAVConfig().isUsingRepositoryPathDirective()) {
