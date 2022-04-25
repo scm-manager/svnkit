@@ -94,17 +94,19 @@ public class DAVPropPatchHandler extends ServletDAVHandler {
             
             boolean isRemove = childElementName == DAVPropPatchRequest.REMOVE;
             List propChildren = propChildrenElement.getChildren();
-            for (Iterator propsIter = propChildren.iterator(); propsIter.hasNext();) {
-                DAVElementProperty property = (DAVElementProperty) propsIter.next();
-                DAVElement propertyName = property.getName();
-                PropertyChangeContext propContext = new PropertyChangeContext();
-                propContext.myIsSet = !isRemove;
-                propContext.myProperty = property;
-                properties.add(propContext);
-                validateProp(propertyName, propsProvider, propContext);
-                if (propContext.myError != null && propContext.myError.getResponseCode() >= 300) {
-                    isFailure = true;
-                }
+            if (propChildren != null) {
+              for (Iterator propsIter = propChildren.iterator(); propsIter.hasNext();) {
+                  DAVElementProperty property = (DAVElementProperty) propsIter.next();
+                  DAVElement propertyName = property.getName();
+                  PropertyChangeContext propContext = new PropertyChangeContext();
+                  propContext.myIsSet = !isRemove;
+                  propContext.myProperty = property;
+                  properties.add(propContext);
+                  validateProp(propertyName, propsProvider, propContext);
+                  if (propContext.myError != null && propContext.myError.getResponseCode() >= 300) {
+                      isFailure = true;
+                  }
+              }
             }
         }
         
