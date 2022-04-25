@@ -93,6 +93,10 @@ configure(javaProjects()) {
         classifier = 'sources'
     }
 
+    javadoc {
+        failOnError = false
+    }
+
     task javadocJar(type: Jar, dependsOn: javadoc) {
         description="Builds Javadoc Jar"
         from "$docsDir/javadoc"
