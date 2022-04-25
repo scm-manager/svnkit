@@ -1,3 +1,15 @@
-jar {
-    enabled = true 
+task('serveDav') << {
+    apply plugin: 'jetty'
+
+    System.setProperty('jetty.home', "${project.projectDir.path}");
+
+    println System.getProperty("jetty.home");
+
+    jettyRun {
+        httpPort = 9090
+        stopPort = 8085
+        stopKey = 'stop-jetty'
+        jettyConfig = new File("${project.projectDir.path}/src/main/config/jetty-config.xml")
+    }.execute()
+
 }

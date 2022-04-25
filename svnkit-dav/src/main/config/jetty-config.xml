@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configure id="Server" class="org.mortbay.jetty.Server">
+  <Call name="addUserRealm">
+    <Arg>
+      <New class="org.mortbay.jetty.security.HashUserRealm">
+        <Set name="name">SVNKit Realm</Set>
+        <Set name="config"><SystemProperty name="jetty.home" default="."/>/src/main/config/realm.properties</Set>
+        <Set name="refreshInterval">0</Set>
+      </New>
+    </Arg>
+  </Call>
+</Configure>
+
+<!--
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+	<Get name="securityHandler">
+		<Set name="userRealm">
+			<New class="org.mortbay.jetty.security.HashUserRealm">
+                <Set name="name">SVNKit Realm</Set>
+				<Set name="config">realm.properties</Set>
+			</New>
+		</Set>
+	</Get>
+</Configure>
+-->
