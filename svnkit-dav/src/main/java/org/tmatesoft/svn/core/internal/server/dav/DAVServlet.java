@@ -14,6 +14,7 @@ package org.tmatesoft.svn.core.internal.server.dav;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.tmatesoft.svn.core.internal.io.dav.DAVElement;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVHandlerFactory;
 import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVResponse;
+import org.tmatesoft.svn.core.internal.server.dav.handlers.DAVHttpServletResponse;
 import org.tmatesoft.svn.core.internal.server.dav.handlers.ServletDAVHandler;
 import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
 import org.tmatesoft.svn.core.internal.util.SVNHashMap;
@@ -123,7 +125,9 @@ public class DAVServlet extends HttpServlet {
         }
     }
 
-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service(HttpServletRequest request, HttpServletResponse servletResponse) throws ServletException, IOException {
+        DAVHttpServletResponse response = DAVHttpServletResponse.wrapOrCast(servletResponse);
+
         ServletDAVHandler handler = null;
         logRequest(request);//TODO: remove later
         try {

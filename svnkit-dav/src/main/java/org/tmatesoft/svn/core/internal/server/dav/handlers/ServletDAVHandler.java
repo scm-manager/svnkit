@@ -204,7 +204,7 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
 
     private DAVRepositoryManager myRepositoryManager;
     private HttpServletRequest myRequest;
-    private HttpServletResponse myResponse;
+    private DAVHttpServletResponse myResponse;
     private FSCommitter myCommitter;
     private FSDeltaConsumer myDeltaConsumer;
     
@@ -256,7 +256,7 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
     protected ServletDAVHandler(DAVRepositoryManager connector, HttpServletRequest request, HttpServletResponse response) {
         myRepositoryManager = connector;
         myRequest = request;
-        myResponse = response;
+        myResponse = DAVHttpServletResponse.wrapOrCast(response);
         init();
     }
 
@@ -1432,7 +1432,7 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
 
     protected Writer getResponseWriter() throws SVNException {
         try {
-            return myResponse.getWriter();
+            return myResponse.getThrowingWriter();
         } catch (IOException e) {
             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.IO_ERROR, e), e, SVNLogType.NETWORK);
         }
