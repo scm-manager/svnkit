@@ -723,7 +723,7 @@ public class DAVUpdateHandler extends DAVReportHandler implements ISVNEditor {
 
     private StringBuffer addVersionURL(String path, StringBuffer xmlBuffer) {
         long revision = DAVServletUtil.getSafeCreatedRevision(myRevisionRoot, path);
-        String url = DAVPathUtil.buildURI(getDAVResource().getResourceURI().getContext(), DAVResourceKind.VERSION, revision, path, false);
+        String url = DAVPathUtil.buildURI(getDAVResource().getResourceURI().getContext(), DAVResourceKind.VERSION, revision, path, false, false);
         xmlBuffer = SVNXMLUtil.openXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "checked-in", SVNXMLUtil.XML_STYLE_NORMAL, null, xmlBuffer);
         SVNXMLUtil.openCDataTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "href", url, xmlBuffer);
         SVNXMLUtil.closeXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, "checked-in", xmlBuffer);

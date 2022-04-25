@@ -122,10 +122,18 @@ public class DAVPathUtil {
                     DAVElement.SVN_DAV_ERROR_NAMESPACE, 0, null);
         }
     }
-
+    
     public static String buildURI(String context, DAVResourceKind davResourceKind, long revision, String path, boolean addHref) {
+      return buildURI(context, davResourceKind, revision, path, addHref, true);
+    }
+
+    public static String buildURI(String context, DAVResourceKind davResourceKind, long revision, String path, boolean addHref, boolean urlEncode) {
         StringBuffer resultURI = new StringBuffer();
-        path = path == null ? "" : SVNEncodingUtil.uriEncode(path);
+        if ( path == null ){
+          path = "";
+        } else if (urlEncode){
+          path = SVNEncodingUtil.uriEncode(path);
+        }
         context = context == null ? "" : context;
         if (addHref) {
             SVNXMLUtil.openXMLTag(SVNXMLUtil.DAV_NAMESPACE_PREFIX, DAVElement.HREF.getName(), SVNXMLUtil.XML_STYLE_PROTECT_CDATA, 
