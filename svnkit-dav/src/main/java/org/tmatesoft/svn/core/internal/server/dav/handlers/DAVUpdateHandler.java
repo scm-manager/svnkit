@@ -367,7 +367,14 @@ public class DAVUpdateHandler extends DAVReportHandler implements ISVNEditor {
                 getReporter().deletePath(entryPath);
             } else {
                 if (getEntryLinkPath() == null) {
-                    getReporter().setPath(entryPath, getEntryLockToken(), getEntryRevision(), getDepth(), isEntryStartEmpty());
+                    /**
+                     * fix git svn clone
+                     */
+                    SVNDepth depth = getDepth();
+                    if (depth == null || depth == SVNDepth.UNKNOWN){
+                      depth = SVNDepth.INFINITY;
+                    }
+                    getReporter().setPath(entryPath, getEntryLockToken(), getEntryRevision(), depth, isEntryStartEmpty());
                 } else {
                     SVNURL linkURL = getDAVResource().getRepository().getLocation().appendPath(getEntryLinkPath(), true);
                     getReporter().linkPath(linkURL, entryPath, getEntryLockToken(), getEntryRevision(), getDepth(), isEntryStartEmpty());
