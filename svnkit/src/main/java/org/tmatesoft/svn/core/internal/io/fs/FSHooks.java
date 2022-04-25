@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -52,7 +54,20 @@ public class FSHooks {
             ".exe", ".bat", ".cmd"
     };
     
+    private static final List hooks = new ArrayList();    
     private static Boolean ourIsHooksEnabled;
+    
+    public static void registerHook( FSHook hook ){
+        synchronized (hooks) {
+            hooks.add(hook);
+        }
+    }
+    
+    public static void unregisterHook(FSHook hook){
+        synchronized (hooks) {
+            hooks.remove(hook);
+        }
+    }
     
     public static void setHooksEnabled(boolean enabled) {
         ourIsHooksEnabled = enabled ? Boolean.TRUE : Boolean.FALSE;
@@ -143,13 +158,40 @@ public class FSHooks {
     }
 
     private static String runHook(File reposRootDir, String hookName, String[] args, byte[] input) throws SVNException {
+        if (args == null) {
+            args = new String[0];
+        }
+        
+        if ( hooks.size() > 0 ){
+            FSHookEvent event = new FSHookEvent(hookName, reposRootDir, args);
+            try {
+              synchronized (hooks) {
+                  Iterator hookIt = hooks.iterator();
+                  while ( hookIt.hasNext() ){
+                      FSHook hook = (FSHook) hookIt.next();
+                      hook.onHook(event);
+                  }                
+              }
+            } catch ( Exception ex ){
+              String stdErrMessage = ex.getMessage();
+              String errorMessage = "{0} hook failed";
+              if (stdErrMessage != null && stdErrMessage.length() > 0) {
+                  errorMessage += " with output:\n{1}";
+                  SVNErrorMessage err = SVNErrorMessage.create(SVNErrorCode.REPOS_HOOK_FAILURE, errorMessage, new Object[] {hookName, stdErrMessage});
+                  SVNErrorManager.error(err, ex, SVNLogType.FSFS);
+              } else {
+                  errorMessage += " with no output.";
+              }
+              SVNErrorMessage err = SVNErrorMessage.create(SVNErrorCode.REPOS_HOOK_FAILURE, errorMessage, new Object[] {hookName});
+              SVNErrorManager.error(err, ex, SVNLogType.FSFS);
+            }
+        }
+        
         File hookFile = getHookFile(reposRootDir, hookName);
         if (hookFile == null) {
             return null;
         }
-        if (args == null) {
-            args = new String[0];
-        }
+        
         Process hookProc = null;
         String reposPath = reposRootDir.getAbsolutePath().replace(File.separatorChar, '/');
         String executableName = hookFile.getName().toLowerCase();
