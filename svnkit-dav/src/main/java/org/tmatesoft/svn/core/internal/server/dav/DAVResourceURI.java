@@ -240,7 +240,9 @@ public class DAVResourceURI {
         } else {
             setActivityID(DAVPathUtil.head(parameter));
             final String path = DAVPathUtil.removeHead(parameter, false);
-            setPath(SVNEncodingUtil.uriDecode(path));
+            // is decoding realy required ??
+            //setPath(SVNEncodingUtil.uriDecode(path));
+            setPath(path);
         }
     }
 
