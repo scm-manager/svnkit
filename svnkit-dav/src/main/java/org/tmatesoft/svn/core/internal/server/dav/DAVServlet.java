@@ -110,7 +110,7 @@ public class DAVServlet extends HttpServlet {
      
     private DAVConfig myDAVConfig;
 
-    private DAVConfig getDAVConfig() {
+    protected DAVConfig getDAVConfig() {
         return myDAVConfig;
     }
 

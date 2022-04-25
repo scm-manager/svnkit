@@ -55,6 +55,10 @@ public class DAVConfig {
     private boolean myIsAutoVersioning = false;
     private boolean myIsAllowBulkUpdates = false;
     private boolean myIsAllowDepthInfinity = false;
+
+    public DAVConfig()
+    {
+    }
     
     public DAVConfig(ServletConfig servletConfig) throws SVNException {
         String repositoryPath = servletConfig.getInitParameter(PATH_DIRECIVE);
