@@ -136,7 +136,13 @@ public class DAVServlet extends HttpServlet {
         } catch (SVNException svne) {
             StringWriter sw = new StringWriter();
             svne.printStackTrace(new PrintWriter(sw));
+           /**
+            * truncate status line if it is to long
+            */
             String msg = sw.getBuffer().toString();
+            if ( msg.length() > 128 ){
+              msg = msg.substring(0, 128);
+            }
             SVNErrorCode errorCode = svne.getErrorMessage().getErrorCode();
             if (errorCode == SVNErrorCode.FS_NOT_DIRECTORY ||
                     errorCode == SVNErrorCode.FS_NOT_FOUND ||
