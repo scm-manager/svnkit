@@ -1,4 +1,4 @@
-rootProject.name = 'org.tmatesoft.svnkit'
+rootProject.name = 'sonia.svnkit'
 
 include 'svnkit'
 include 'svnkit-cli'

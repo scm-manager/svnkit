@@ -72,7 +72,7 @@ task buildUpdateSite << {
     configurations.osgi.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         if (artifact.file.name.endsWith('.zip') || artifact.file.name.endsWith('.jar')) {
             name = artifact.name
-            if (name == 'org.tmatesoft.svnkit') {
+            if (name == 'sonia.svnkit') {
                 name = 'svnkit_osgi'
             }
             files[name] = artifact.file

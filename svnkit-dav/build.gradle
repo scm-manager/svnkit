@@ -1,0 +1,11 @@
+jar {
+    enabled = true 
+}
+
+uploadMaven {
+    repositories.mavenDeployer {
+        pom.whenConfigured { p ->
+            p.dependencies.clear()
+        }
+    }
+}
