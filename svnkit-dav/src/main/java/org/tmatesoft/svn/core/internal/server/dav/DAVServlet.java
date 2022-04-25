@@ -131,7 +131,6 @@ public class DAVServlet extends HttpServlet {
             handler = DAVHandlerFactory.createHandler(repositoryManager, request, response);
             handler.execute();
         } catch (DAVException de) {
-            response.setContentType(XML_CONTENT_TYPE);
             handleError(de, response);
         } catch (SVNException svne) {
             StringWriter sw = new StringWriter();
@@ -253,6 +252,12 @@ public class DAVServlet extends HttpServlet {
                 servletResponse.getWriter().print(errorMessageBuffer.toString());
                 SVNDebugLog.getDefaultLog().logFine(SVNLogType.NETWORK, errorMessageBuffer.toString());
                 return;
+            } else {
+                // override application/xml content-type, for errors without xml body,
+                // because the svnclient will try to parse the response body, if the content type
+                // is application/xml. We will use text/html, because some application server will
+                // will return html pages for servlet error codes.
+                servletResponse.setContentType("text/html");
             }
             servletResponse.setStatus(error.getResponseCode());
             return;
