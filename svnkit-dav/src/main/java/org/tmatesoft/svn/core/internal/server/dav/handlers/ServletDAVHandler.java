@@ -1561,7 +1561,7 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
     protected void appendServerSignature(StringBuffer buffer, String prefix) {
         buffer.append(prefix);
         buffer.append("<address>");
-        ServletContext context = myRequest.getSession().getServletContext();
+        ServletContext context = myRepositoryManager.getServletContext();
         
         buffer.append(context.getServerInfo());
         buffer.append(" ");
@@ -1646,7 +1646,8 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
         
         long ifModifiedSince = getRequestDateHeader(IF_MODIFIED_SINCE_HEADER);
         if (DAVHandlerFactory.METHOD_GET.equals(getRequestMethod()) && (notModified || ifNoneMatch == null) && ifModifiedSince != -1) {
-            long requestTime = myRequest.getSession().getLastAccessedTime();
+            // TODO check if this is correct
+            long requestTime = System.currentTimeMillis();
             notModified = ifModifiedSince >= lastModifiedTime && ifModifiedSince <= requestTime;
         }
         

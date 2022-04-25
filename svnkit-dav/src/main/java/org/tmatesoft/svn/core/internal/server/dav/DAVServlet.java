@@ -127,7 +127,7 @@ public class DAVServlet extends HttpServlet {
         ServletDAVHandler handler = null;
         logRequest(request);//TODO: remove later
         try {
-            DAVRepositoryManager repositoryManager = new DAVRepositoryManager(getDAVConfig(), request);
+            DAVRepositoryManager repositoryManager = new DAVRepositoryManager(getDAVConfig(), getServletContext(), request);
             handler = DAVHandlerFactory.createHandler(repositoryManager, request, response);
             handler.execute();
         } catch (DAVException de) {

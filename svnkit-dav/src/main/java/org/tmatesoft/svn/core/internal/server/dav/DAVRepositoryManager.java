@@ -15,6 +15,7 @@ import java.io.File;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.ServletContext;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,6 +46,7 @@ public class DAVRepositoryManager {
     private static final String DEFAULT_ACTIVITY_DB = "dav/activities.d";
 
     private DAVConfig myDAVConfig;
+    private ServletContext myServletContext;
 
     private String myResourceRepositoryRoot;
     private String myResourceContext;
@@ -52,12 +54,13 @@ public class DAVRepositoryManager {
     private Principal myUserPrincipal;
     private File myRepositoryRootDir;
     
-    public DAVRepositoryManager(DAVConfig config, HttpServletRequest request) throws SVNException {
+    public DAVRepositoryManager(DAVConfig config, ServletContext servletContext, HttpServletRequest request) throws SVNException {
         if (config == null) {
             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.RA_DAV_INVALID_CONFIG_VALUE), SVNLogType.NETWORK);
         }
 
         myDAVConfig = config;
+        myServletContext = servletContext;
 
         myResourceRepositoryRoot = getRepositoryRoot(request.getPathInfo());
         myResourceContext = getResourceContext(request);
@@ -150,6 +153,10 @@ public class DAVRepositoryManager {
 
     public DAVConfig getDAVConfig() {
         return myDAVConfig;
+    }
+    
+    public ServletContext getServletContext() {
+        return myServletContext;
     }
 
     public String getResourceRepositoryRoot() {
