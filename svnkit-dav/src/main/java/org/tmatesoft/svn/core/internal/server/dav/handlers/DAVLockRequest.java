@@ -44,7 +44,9 @@ public class DAVLockRequest extends DAVRequest {
     public DAVLock parseLockInfo(DAVLockHandler handler, DAVResource resource, List namespaces) throws DAVException {
         DAVDepth depth = null;
         try {
-            depth = handler.getRequestDepth(DAVDepth.DEPTH_INFINITY);
+            // default depth should be 0, not inifity
+            // see https://bitbucket.org/sdorra/scm-manager/issue/420/svn-locks-does-not-work-with-svnkit
+            depth = handler.getRequestDepth(DAVDepth.DEPTH_ZERO);
         } catch (SVNException svne) {
             throw DAVException.convertError(svne.getErrorMessage(), HttpServletResponse.SC_BAD_REQUEST, null, null);
         }

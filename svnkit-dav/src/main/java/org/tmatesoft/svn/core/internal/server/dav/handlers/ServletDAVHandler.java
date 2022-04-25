@@ -1230,7 +1230,8 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
                 List lockChildren = lockChild.getChildren();
                 for (Iterator lockChildrenIter = lockChildren.iterator(); lockChildrenIter.hasNext();) {
                     DAVElementProperty lockElementChild = (DAVElementProperty) lockChildrenIter.next();
-                    if (lockElementChild.getName() == LOCK_PATH_ELEM) {
+                    // check if the element name is equals, because svn 1.8 seems to miss ns prefix
+                    if (elementNameEquals(lockElementChild.getName(), LOCK_PATH_ELEM)) {
                         String cdata = lockElementChild.getFirstValue(false);
                         DAVPathUtil.testCanonical(cdata);
                         lockPath = SVNPathUtil.append(pathPrefix, cdata);
@@ -1243,7 +1244,8 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
                             lockPath = null;
                             lockToken = null;
                         }
-                    } else if (lockElementChild.getName() == LOCK_TOKEN_ELEM) {
+                    // check if the element name is equals, because svn 1.8 seems to miss ns prefix
+                    } else if (elementNameEquals(lockElementChild.getName(), LOCK_TOKEN_ELEM)) {
                         lockToken = lockElementChild.getFirstValue(true);
                         if (lockPath != null && lockToken != null) {
                             pathsToLockTokens.put(lockPath, lockToken);
@@ -1255,6 +1257,10 @@ public abstract class ServletDAVHandler extends BasicDAVHandler {
             }
         }
         return pathsToLockTokens;
+    }
+   
+    private boolean elementNameEquals( DAVElement element, DAVElement other ){
+      return element.getName().equals(other.getName());
     }
 
     protected DAVDepth getRequestDepth(DAVDepth defaultDepth) throws SVNException {
