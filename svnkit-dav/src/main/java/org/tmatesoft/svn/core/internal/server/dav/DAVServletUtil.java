@@ -150,10 +150,22 @@ public class DAVServletUtil {
             parsedHost += domain;
         }
         
+        serverHost = removeUsernameFromHost(serverHost);
+        
         if (parsedHost != null && !parsedHost.equals(serverHost)) {
             throw new DAVException("Destination URI refers to a different server.", HttpServletResponse.SC_BAD_GATEWAY, 0);
         }
         return parsedURI;
+    }
+    
+    private static String removeUsernameFromHost(String host) {
+      String result = host;
+      int at = host.indexOf('@');
+      if ( at >= 0 && (at + 1) < host.length() )
+      {
+        result = host.substring(at + 1);
+      }
+      return result;
     }
     
     public static void setAutoRevisionProperties(DAVResource resource) throws DAVException {
