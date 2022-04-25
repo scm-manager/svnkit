@@ -67,8 +67,8 @@ public class DAVGetHandler extends ServletDAVHandler {
         }
 
         if (resource.isCollection()) {
-            StringBuffer body = new StringBuffer();
-            generateResponseBody(resource, body);
+            StringBuilder body = new StringBuilder();
+            getConfig().getCollectionRenderer().renderCollection(body, resource);
             String responseBody = body.toString();
 
             try {
@@ -141,63 +141,5 @@ public class DAVGetHandler extends ServletDAVHandler {
         if (eTag != null) {
             setResponseHeader(ETAG_HEADER, eTag);
         }
-    }
-
-    private void generateResponseBody(DAVResource resource, StringBuffer buffer) throws SVNException {
-        startBody(SVNPathUtil.tail(resource.getResourceURI().getContext()), resource.getResourceURI().getPath(), resource.getRevision(), buffer);
-        addUpperDirectoryLink(resource.getResourceURI().getContext(), resource.getResourceURI().getPath(), buffer);
-        addDirectoryEntries(resource, buffer);
-        finishBody(buffer);
-    }
-
-    private void startBody(String contextComponent, String path, long revision, StringBuffer buffer) {
-        buffer.append("<html><head><title>");
-        buffer.append(contextComponent);
-        buffer.append(" - Revision ");
-        buffer.append(String.valueOf(revision));
-        buffer.append(": ");
-        buffer.append(path);
-        buffer.append("</title></head>\n");
-        buffer.append("<body>\n<h2>");
-        buffer.append(contextComponent);
-        buffer.append(" - Revision ");
-        buffer.append(String.valueOf(revision));
-        buffer.append(": ");
-        buffer.append(path);
-        buffer.append("</h2>\n <ul>\n");
-    }
-
-    private void addUpperDirectoryLink(String context, String path, StringBuffer buffer) {
-        if (!"/".equals(path)) {
-            buffer.append("<li><a href=\"");
-            buffer.append(context);
-            String parent = DAVPathUtil.removeTail(path, true);
-            buffer.append("/".equals(parent) ? "" : parent);
-            buffer.append("/");
-            buffer.append("\">..</a></li>\n");
-        }
-    }
-
-    private void addDirectoryEntries(DAVResource resource, StringBuffer buffer) throws SVNException {
-        for (Iterator iterator = resource.getEntries().iterator(); iterator.hasNext();) {
-            SVNDirEntry entry = (SVNDirEntry) iterator.next();
-            boolean isDir = entry.getKind() == SVNNodeKind.DIR;
-            buffer.append("<li><a href=\"");
-            buffer.append(resource.getResourceURI().getContext());
-            buffer.append("/".equals(resource.getResourceURI().getPath()) ? "" : resource.getResourceURI().getPath());
-            buffer.append(DAVPathUtil.standardize(entry.getName()));
-            buffer.append(isDir ? "/" : "");
-            buffer.append("\">");
-            buffer.append(entry.getName());
-            buffer.append(isDir ? "/" : "");
-            buffer.append("</a></li>\n");
-        }
-    }
-
-    private void finishBody(StringBuffer buffer) {
-        buffer.append("</ul><hr noshade><em>");
-        buffer.append("Powered by ");
-        buffer.append(Version.getVersionString());
-        buffer.append("</em>\n</body></html>");
     }
 }

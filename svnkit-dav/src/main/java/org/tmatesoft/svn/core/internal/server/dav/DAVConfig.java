@@ -55,6 +55,7 @@ public class DAVConfig {
     private boolean myIsAutoVersioning = false;
     private boolean myIsAllowBulkUpdates = false;
     private boolean myIsAllowDepthInfinity = false;
+    private CollectionRenderer collectionRenderer;
 
     public DAVConfig()
     {
@@ -180,6 +181,13 @@ public class DAVConfig {
 
     public boolean isAllowBulkUpdates() {
         return myIsAllowBulkUpdates;
+    }
+
+    public CollectionRenderer getCollectionRenderer(){
+        if ( collectionRenderer == null ){
+            collectionRenderer = new DefaultCollectionRenderer();
+        }
+        return collectionRenderer;
     }
 
 }
