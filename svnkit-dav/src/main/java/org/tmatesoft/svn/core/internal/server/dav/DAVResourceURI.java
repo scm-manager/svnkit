@@ -40,8 +40,12 @@ public class DAVResourceURI {
     private boolean myIsVersioned = false;
     private boolean myIsBaseLined = false;
     private boolean myIsWorking = false;
-
+    
     public DAVResourceURI(String context, String uri, String label, boolean useCheckedIn) throws SVNException {
+      this(context, uri, label, useCheckedIn, DAVResource.INVALID_REVISION);
+    }
+
+    public DAVResourceURI(String context, String uri, String label, boolean useCheckedIn, long revision) throws SVNException {
         StringBuffer logBuffer = new StringBuffer();
         logBuffer.append('\n');
         logBuffer.append("uri: " + uri);
@@ -54,7 +58,7 @@ public class DAVResourceURI {
         
         myURI = uri == null ? "" : uri;
         myContext = context;
-        myRevision = DAVResource.INVALID_REVISION;
+        myRevision = revision;
         parseURI(label, useCheckedIn);
 
         logBuffer.delete(0, logBuffer.length());

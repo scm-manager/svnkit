@@ -27,6 +27,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNRevisionProperty;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.internal.io.fs.FSCommitter;
 import org.tmatesoft.svn.core.internal.io.fs.FSFS;
 import org.tmatesoft.svn.core.internal.io.fs.FSID;
@@ -448,6 +449,17 @@ public class DAVServletUtil {
         
         private ListType() {
         }
+    }
+    
+    public static SVNURL createAbsoluteURL( HttpServletRequest request, String path ) throws SVNException {
+        if ( ! path.contains("://") ) {
+            StringBuilder buffer = new StringBuilder(request.getScheme());
+            buffer.append("://").append(request.getServerName());
+            buffer.append(":").append( String.valueOf(request.getServerPort() ));
+            buffer.append(path);
+            path = buffer.toString();
+        }
+        return SVNURL.parseURIEncoded(path);
     }
 
 }

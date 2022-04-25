@@ -201,7 +201,15 @@ public class DAVRepositoryManager {
     public DAVResource getRequestedDAVResource(boolean isSVNClient, String deltaBase, String pathInfo, long version, String clientOptions,
             String baseChecksum, String resultChecksum, String label, boolean useCheckedIn, List lockTokens, Map capabilities) throws SVNException {
         pathInfo = pathInfo == null ? getResourcePathInfo() : pathInfo;
-        DAVResourceURI resourceURI = new DAVResourceURI(getResourceContext(), pathInfo, label, useCheckedIn);
+        
+        // use latest version, if no version was specified
+        SVNRepository resourceRepository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(getResourceRepositoryRoot()));
+        if ( version == -1 )
+        {
+          version = resourceRepository.getLatestRevision();
+        }
+        
+        DAVResourceURI resourceURI = new DAVResourceURI(getResourceContext(), pathInfo, label, useCheckedIn, version);
         DAVConfig config = getDAVConfig();
         String fsParentPath = config.getRepositoryParentPath();
         String xsltURI = config.getXSLTIndex();
@@ -228,7 +236,6 @@ public class DAVRepositoryManager {
         String userName = myUserPrincipal != null ? myUserPrincipal.getName() : null;
         SVNAuthentication auth = new SVNUserNameAuthentication(userName, false, null, false);
         BasicAuthenticationManager authManager = new BasicAuthenticationManager(new SVNAuthentication[] { auth });
-        SVNRepository resourceRepository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(getResourceRepositoryRoot()));
         resourceRepository.setAuthenticationManager(authManager);
         DAVResource resource = new DAVResource(resourceRepository, this, resourceURI, isSVNClient, deltaBase, version, 
                 clientOptions, baseChecksum, resultChecksum, userName, activitiesDBDir, lockTokens, capabilities);
