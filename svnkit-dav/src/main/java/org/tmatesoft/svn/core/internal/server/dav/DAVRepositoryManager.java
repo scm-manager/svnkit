@@ -64,7 +64,7 @@ public class DAVRepositoryManager {
         myUserPrincipal = request.getUserPrincipal();
         myRepositoryRootDir = getRepositoryRootDir(request.getPathInfo());
         myResourcePathInfo = getResourcePathInfo(request);
-            
+        
         if (config.isUsingPBA()) {
             String path = null;
             if (!DAVHandlerFactory.METHOD_MERGE.equals(request.getMethod())) {
@@ -190,6 +190,7 @@ public class DAVRepositoryManager {
         String uri = DAVPathUtil.addLeadingSlash(url.getURIEncodedPath());
         if (uri.startsWith(getResourceContext())) {
             uri = uri.substring(getResourceContext().length());
+            uri = DAVPathUtil.addLeadingSlash(uri);
         } else {
             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.RA_DAV_REQUEST_FAILED, "Invalid URL ''{0}'' requested", url.toString()), 
                     SVNLogType.NETWORK);
@@ -267,6 +268,8 @@ public class DAVRepositoryManager {
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || "".equals(pathInfo)) {
             pathInfo = "/";
+        } else {
+          pathInfo = SVNEncodingUtil.uriDecode(pathInfo);
         }
         
         if (getDAVConfig().isUsingRepositoryPathDirective()) {
@@ -299,7 +302,7 @@ public class DAVRepositoryManager {
                 }
                 requestContext = SVNPathUtil.append(requestContext, servletPath);
             }
-            return SVNEncodingUtil.uriEncode(requestContext);
+            return encodeRequestContext(requestContext);
         }
         
         String reposName = DAVPathUtil.head(pathInfo);
@@ -309,9 +312,13 @@ public class DAVRepositoryManager {
             }
             String pathToRepos = SVNPathUtil.append(requestContext, servletPath);
             requestContext = SVNPathUtil.append(pathToRepos, reposName);
-            return SVNEncodingUtil.uriEncode(requestContext);
+            return encodeRequestContext(requestContext);
         }
         requestContext = DAVPathUtil.append(requestContext, reposName);
-        return SVNEncodingUtil.uriEncode(requestContext);
+        return encodeRequestContext(requestContext);
+    }
+
+    private String encodeRequestContext(String requestContext){
+        return SVNEncodingUtil.uriEncode( DAVPathUtil.addLeadingSlash(requestContext) );
     }
 }
