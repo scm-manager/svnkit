@@ -148,6 +148,7 @@ public class DAVGetLocationSegmentsHandler extends DAVReportHandler implements I
 
         String path = locationSegment.getPath();
         if (path != null) {
+            path = DAVPathUtil.dropLeadingSlash(path);
             String quotedPath = SVNEncodingUtil.xmlEncodeCDATA(path, true);
             attrs.put(PATH_ATTR, quotedPath);
             attrs.put(RANGE_START_ATTR, String.valueOf(locationSegment.getStartRevision()));
