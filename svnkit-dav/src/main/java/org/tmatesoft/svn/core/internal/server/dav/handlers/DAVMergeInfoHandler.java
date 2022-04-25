@@ -12,6 +12,7 @@
 package org.tmatesoft.svn.core.internal.server.dav.handlers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -71,11 +72,15 @@ public class DAVMergeInfoHandler extends DAVReportHandler {
         StringBuffer xmlBuffer = new StringBuffer();
         addXMLHeader(xmlBuffer, MERGEINFO_REPORT);
 
+        Map pathMapping = new HashMap();
+        
         for (int i = 0; i < getMergeInfoRequest().getTargetPaths().length; i++) {
             String currentPath = getMergeInfoRequest().getTargetPaths()[i];
             DAVPathUtil.testCanonical(currentPath);
             if (currentPath.length() == 0 || currentPath.charAt(0) != '/') {
-                getMergeInfoRequest().getTargetPaths()[i] = SVNPathUtil.append(getDAVResource().getResourceURI().getPath(), currentPath);
+                String newPath = SVNPathUtil.append(getDAVResource().getResourceURI().getPath(), currentPath);
+                getMergeInfoRequest().getTargetPaths()[i] = newPath;
+                pathMapping.put(newPath, currentPath);
             }
         }
 
@@ -86,6 +91,9 @@ public class DAVMergeInfoHandler extends DAVReportHandler {
             for (Iterator iterator = mergeInfoMap.entrySet().iterator(); iterator.hasNext();) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String path = (String) entry.getKey();
+                if ( pathMapping.containsKey(path) ){
+                    path = (String) pathMapping.get(path);
+                }
                 SVNMergeInfo mergeInfo = (SVNMergeInfo) entry.getValue();
                 addMergeInfo(path, mergeInfo, xmlBuffer);
             }
