@@ -47,7 +47,8 @@ public class SVNSSHConnector implements ISVNConnector {
     private InputStream myInputStream;
     private OutputStream myOutputStream;
     private boolean myIsUseSessionPing;
-    
+    private StreamLogger stderrConsumer;
+
     public SVNSSHConnector() {
         this(true, true);
     }
@@ -168,7 +169,7 @@ public class SVNSSHConnector implements ISVNConnector {
                     myOutputStream = new BufferedOutputStream(myOutputStream, 16*1024);
                     myInputStream = mySession.getOut();
                     myInputStream = new BufferedInputStream(myInputStream, 16*1024);
-                    StreamLogger.consume(mySession.getErr());
+                    stderrConsumer = StreamLogger.consume(mySession.getErr());
                     return;
                 } catch (SocketTimeoutException e) {
 	                SVNErrorMessage err = SVNErrorMessage.create(SVNErrorCode.RA_SVN_IO_ERROR, "timed out waiting for server", null, SVNErrorMessage.TYPE_ERROR, e);
@@ -198,6 +199,10 @@ public class SVNSSHConnector implements ISVNConnector {
     }
 
     public void close(SVNRepositoryImpl repository) throws SVNException {
+        if (stderrConsumer != null) {
+            stderrConsumer.close();
+            stderrConsumer = null;
+        }
         SVNFileUtil.closeFile(myOutputStream);
         SVNFileUtil.closeFile(myInputStream);
         if (mySession != null) {
