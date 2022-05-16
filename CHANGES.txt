@@ -1,3 +1,7 @@
+== version 1.10.6  ==
+
++ SVNKIT-759: Stability fixes for Apashe sshd based implementation for svn+ssh:// protocol.
+
 == version 1.10.5  ==
 
 + SVNKIT-763: JVM property tell SVNKit that 'mtime' microsecond precision is [not] supported.
