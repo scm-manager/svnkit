@@ -1,5 +1,21 @@
 package org.tmatesoft.svn.core.internal.wc;
 
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import java.io.File;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNURL;
@@ -9,23 +25,6 @@ import org.tmatesoft.svn.core.internal.util.SVNHashMap;
 import org.tmatesoft.svn.core.internal.util.SVNSSLUtil;
 import org.tmatesoft.svn.util.SVNDebugLog;
 import org.tmatesoft.svn.util.SVNLogType;
-
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
-import java.io.File;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
 
 /**
  * @author TMate Software Ltd.
@@ -62,7 +61,7 @@ public class DefaultSVNSSLTrustManager implements X509TrustManager {
 
     private X509TrustManager[] initDefaultTrustManagers() {
         try {
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509", "SunJSSE");
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init((KeyStore) null);
             TrustManager[] trustManagers = tmf.getTrustManagers();
             if (trustManagers == null || trustManagers.length == 0) {
@@ -77,8 +76,6 @@ public class DefaultSVNSSLTrustManager implements X509TrustManager {
             }
             return (X509TrustManager[]) x509TrustManagers.toArray(new X509TrustManager[x509TrustManagers.size()]);
         } catch (NoSuchAlgorithmException e) {
-            SVNDebugLog.getDefaultLog().log(SVNLogType.DEFAULT, e, Level.FINEST);
-        } catch (NoSuchProviderException e) {
             SVNDebugLog.getDefaultLog().log(SVNLogType.DEFAULT, e, Level.FINEST);
         } catch (KeyStoreException e) {
             SVNDebugLog.getDefaultLog().log(SVNLogType.DEFAULT, e, Level.FINEST);
