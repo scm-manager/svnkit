@@ -11,15 +11,20 @@
  */
  package org.tmatesoft.svn.core.internal.io.svn.ssh.apache;
 
-import org.apache.sshd.client.channel.ChannelExec;
-import org.apache.sshd.client.channel.ClientChannelEvent;
-import org.apache.sshd.client.session.ClientSession;
-import org.tmatesoft.svn.core.internal.io.svn.ssh.SshSession;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.sshd.client.channel.ChannelExec;
+import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.future.OpenFuture;
+import org.apache.sshd.client.session.ClientSession;
+import org.tmatesoft.svn.core.internal.io.svn.ssh.SshSession;
 
 public class ApacheSshSession implements SshSession {
 
@@ -97,7 +102,17 @@ public class ApacheSshSession implements SshSession {
         channel.setErr(new PipedOutputStream(err));
         in = new PipedOutputStream();
         channel.setIn(new PipedInputStream(in));
-        channel.open().await();
+
+        final OpenFuture future = channel.open();
+        future.await();
+        if (!future.isOpened()) {
+            Throwable exception = future.getException();
+            if (exception != null) {
+                throw new IOException(exception);
+            } else {
+                throw new IOException("Cannot open channel");
+            }
+        }
         log.finest(() -> "Opened connection with " + command);
     }
 
