@@ -47,7 +47,7 @@ public class ApacheSshSession implements SshSession {
     public void close() {
         if (channel != null) {
             try {
-                channel.close();
+                channel.close(false).await();
                 channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), 10000);
             } catch (Exception e) {
                 log.log(Level.WARNING, "Failed to close channel", e);
