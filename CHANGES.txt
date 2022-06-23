@@ -1,3 +1,8 @@
+== version 1.10.7  ==
+
++ SVNKIT-764: "E210004: Handshake failed, data stream ended unexpectedly" bug fixed for svn+ssh:// protocol.
++ SSL certificates problem fixed for Amazon Corretto 11 JDK.
+
 == version 1.10.6  ==
 
 + SVNKIT-759: Stability fixes for Apashe sshd based implementation for svn+ssh:// protocol.
