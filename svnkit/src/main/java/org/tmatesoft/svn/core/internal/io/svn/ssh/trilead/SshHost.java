@@ -280,7 +280,7 @@ public class SshHost {
     }
 
     public String toString() {
-        return myUserName + "@" + myHost + ":" + myPort + ":" + myConnections.size();
+        return myHost + ":" + myPort;
     }
 
 }

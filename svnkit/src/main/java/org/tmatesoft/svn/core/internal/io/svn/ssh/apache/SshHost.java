@@ -226,12 +226,12 @@ public class SshHost {
         try {
             return new SshConnection(this);
         } catch (Exception e) {
-            throw new IOException("Failed to connect to "+getKey(), e);
+            throw new IOException("Failed to connect to "+toString(), e);
         }
     }
 
     public String toString() {
-        return userName + "@" + hostName + ":" + port + ":" + connections.size();
+        return hostName + ":" + port;
     }
 
     public void setHostVerifier(ISVNSSHHostVerifier hostVerifier) {

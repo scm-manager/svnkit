@@ -75,7 +75,7 @@ public class SshConnection {
                 }
                 return true;
             } catch (SVNException e) {
-                log.log(Level.SEVERE, "Failed while verifying host key: " + host.getKey(), e);
+                log.log(Level.SEVERE, "Failed while verifying host key: " + host.toString(), e);
                 return false;
             }
         });
