@@ -301,15 +301,15 @@ abstract class HTTPAuthentication {
     private static Collection<String> sortSchemes(Collection<String> authHeaders, Collection<String> authTypes) {
         String priorities = System.getProperty(AUTH_METHODS_PROPERTY, System.getProperty(OLD_AUTH_METHODS_PROPERTY));
         final List<String> schemes = new ArrayList<String>();
-        if (authTypes != null && !authTypes.isEmpty()) {
-            schemes.addAll(authTypes);
-        } else if (priorities != null && !"".equals(priorities.trim())) {
+        if (priorities != null && !"".equals(priorities.trim())) {
             for(StringTokenizer tokens = new StringTokenizer(priorities, " ,"); tokens.hasMoreTokens();) {
                 String scheme = tokens.nextToken();
                 if (!schemes.contains(scheme)) {
                     schemes.add(scheme);
                 }
             }
+        } else if (authTypes != null && !authTypes.isEmpty()) {
+            schemes.addAll(authTypes);
         } else {
             return authHeaders;    
         }
