@@ -91,6 +91,7 @@ public class SshConnection {
             session = connectFuture.getClientSession();
             session.auth().verify(10000);
         } catch (Exception e) {
+            client.stop();
             client.close();
             throw e;
         }
@@ -116,6 +117,7 @@ public class SshConnection {
             session = null;
         }
         client.stop();
+        client.close(false);
         sessionCount = 0;
     }
 

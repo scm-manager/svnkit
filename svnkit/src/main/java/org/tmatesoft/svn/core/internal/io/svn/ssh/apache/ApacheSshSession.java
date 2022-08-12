@@ -30,6 +30,7 @@ public class ApacheSshSession implements SshSession {
 
     private static final Logger log = Logger.getLogger(ApacheSshSession.class.getName());
     private SshConnection connection;
+    private boolean closeConnection;
     private ChannelExec channel;
     private PipedInputStream out;
     private PipedInputStream err;
@@ -38,6 +39,7 @@ public class ApacheSshSession implements SshSession {
 
     public ApacheSshSession(SshConnection connection) {
         this.connection = connection;
+        this.closeConnection = false;
     }
 
     public static int getExecCount() {
@@ -55,6 +57,9 @@ public class ApacheSshSession implements SshSession {
         }
 //        waitForCondition(ChannelCondition.CLOSED, 0);
         connection.sessionClosed(this);
+        if (closeConnection) {
+            connection.close();
+        }
     }    
     
     public InputStream getOut() {
@@ -89,7 +94,9 @@ public class ApacheSshSession implements SshSession {
             tryExecCommand(command);
         } catch (Exception e) {
             close();
+            connection.close();
             connection = connection.reOpen();
+            closeConnection = true;
             tryExecCommand(command);
         }
     }
