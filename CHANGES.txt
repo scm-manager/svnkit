@@ -1,3 +1,11 @@
+== version 1.10.8  ==
+
++ SVNKIT-768: paths are now URL-encoded correctly in 'svnkit-dav' module.
++ SVNKIT-767: many "timer" threads problem is fixed in Apache SSHD-based support of svn+ssh:// protocol.
++ SVNKIT-766: "svnkit.http.methods" JVM property now has priority over "http-auth-types" option of "servers" file.
++ SVNKIT-766: The order of supported auth types from "http-auth-types" option of "servers" file is now used.
++ SVNKIT-735: an incorrect fix regarding quotes in 'jsvn' script is reverted.
+
 == version 1.10.7  ==
 
 + SVNKIT-765: Major security issue in Apache sshd based implementation fixed (private key appeared in an exception message).
