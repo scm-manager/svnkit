@@ -43,6 +43,7 @@ import org.tmatesoft.svn.core.internal.server.dav.DAVResource;
 import org.tmatesoft.svn.core.internal.server.dav.DAVResourceKind;
 import org.tmatesoft.svn.core.internal.server.dav.DAVServletUtil;
 import org.tmatesoft.svn.core.internal.server.dav.DAVXMLUtil;
+import org.tmatesoft.svn.core.internal.util.SVNEncodingUtil;
 import org.tmatesoft.svn.core.internal.util.SVNHashMap;
 import org.tmatesoft.svn.core.internal.util.SVNHashSet;
 import org.tmatesoft.svn.core.internal.util.SVNPathUtil;
@@ -393,7 +394,7 @@ public class DAVUpdateHandler extends DAVReportHandler implements ISVNEditor {
     }
 
     private String getRealPath(String path) {
-        path = SVNPathUtil.getAbsolutePath(SVNPathUtil.append(getAnchor(), path));
+        path = SVNPathUtil.getAbsolutePath(SVNPathUtil.append(getAnchor(), SVNEncodingUtil.uriEncode(path)));
         if (getPathMap().isEmpty()) {
             return path;
         }
