@@ -285,12 +285,14 @@ class HTTPRequest {
         } 
         SVNErrorMessage error = createDefaultErrorMessage(myConnection.getHost(), path, myStatus, contextMessage, 
                 contextObjects);
-        SVNErrorMessage davError = myConnection.readError(this, request, path);
-        if (davError != null) {
-            if (error != null) {
-                davError.setChildErrorMessage(error);
+        if (!"HEAD".equals(request)) {
+            SVNErrorMessage davError = myConnection.readError(this, request, path);
+            if (davError != null) {
+                if (error != null) {
+                    davError.setChildErrorMessage(error);
+                }
+                return davError;
             }
-            return davError; 
         }
         return error;
     }
