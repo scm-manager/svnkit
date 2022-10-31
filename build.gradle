@@ -1,5 +1,5 @@
 group = 'org.tmatesoft.svnkit'
-version = '1.10.8'
+version = '1.10.9'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
@@ -54,11 +54,11 @@ subprojects {
        compatibleSvnVersion = rootProject.compatibleSvnVersion
 
        buildVersion = [
-           baseVersion : '1.10.8',
+           baseVersion : '1.10.9',
            buildNumber : buildNumber,
            major: '1',
            minor: '10',
-           micro: '8'
+           micro: '9'
        ]
        buildNumber = rootProject.buildNumber
     }
