@@ -1,3 +1,8 @@
+== version 1.10.9  ==
+
++ SQLJet library: GPL v3 License file and copyright notice added.
++ SVNKIT-769: 5 seconds delay in HTTPv2 mode while committing added files is fixed.
+
 == version 1.10.8  ==
 
 + SVNKIT-768: paths are now URL-encoded correctly in 'svnkit-dav' module.
