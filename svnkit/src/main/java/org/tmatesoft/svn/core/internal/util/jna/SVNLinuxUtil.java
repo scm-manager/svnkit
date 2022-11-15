@@ -495,6 +495,9 @@ public class SVNLinuxUtil {
             return SVNFileUtil.isAMD64 ? 24 : 16;
         }
         if (SVNFileUtil.isOSX) {
+            if (SVNFileUtil.isAarchh64) {
+                return 4;
+            }
             return 8;
         }
         if (SVNFileUtil.isSolaris && SVNFileUtil.is64Bit) {
@@ -515,6 +518,9 @@ public class SVNLinuxUtil {
             return modeOffset + (SVNFileUtil.isAMD64 ? 4 : 8);
         }
         if (SVNFileUtil.isOSX) {
+            if (SVNFileUtil.isAarchh64) {
+                return modeOffset + 12; // st_uid is offset 16
+            }
             return modeOffset + 4;
         }
         if (SVNFileUtil.isSolaris) {
@@ -549,6 +555,9 @@ public class SVNLinuxUtil {
             return 64;
         }
         if (SVNFileUtil.isOSX) {
+            if (SVNFileUtil.isAarchh64) {
+                return 48; // st_mtime is offset 48
+            }
             return 40;
         }
         return 88;
@@ -559,7 +568,7 @@ public class SVNLinuxUtil {
                 getFileLastModifiedOffset() + 4 :
                 getFileLastModifiedOffset() + 8;
     }
-    
+
     private static int getReadWriteConstant() {
         return 2;
     }
