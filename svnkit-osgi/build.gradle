@@ -7,7 +7,7 @@ configurations {
 dependencies {
     compile project(path: ':svnkit')
     compile project(path: ':svnkit-javahl16')
-    compile 'org.eclipse.core:runtime:3.2.0-v20060603'
+    compile 'org.eclipse.core:runtime:3.10.0-v20140318-2214'
 
     embedOsgi project(path: ':svnkit', transitive: false, configuration: 'jar_archive')
     embedOsgi project(path: ':svnkit-javahl16', transitive: false, configuration: 'jar_archive')

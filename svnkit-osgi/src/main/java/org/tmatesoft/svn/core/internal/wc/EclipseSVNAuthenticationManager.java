@@ -16,8 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
+import org.eclipse.core.internal.runtime.AuthorizationHandler;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -75,7 +75,7 @@ public class EclipseSVNAuthenticationManager extends DefaultSVNAuthenticationMan
         public SVNAuthentication requestClientAuthentication(String kind, SVNURL url, String realm, SVNErrorMessage errorMessage, SVNAuthentication previousAuth, boolean authMayBeStored) {
             // get from key-ring, use realm.
             realm = realm == null ? DEFAULT_URL.toString() : realm;
-            Map info = Platform.getAuthorizationInfo(DEFAULT_URL, realm, kind);
+            Map info = AuthorizationHandler.getAuthorizationInfo(DEFAULT_URL, realm, kind);
             // convert info to SVNAuthentication.
             if (info != null && ISVNAuthenticationManager.SSL.equals(kind)) {
                 String sslKind = (String) info.get("ssl-kind");
@@ -165,13 +165,13 @@ public class EclipseSVNAuthenticationManager extends DefaultSVNAuthenticationMan
                 }
             }
             try {
-                Platform.addAuthorizationInfo(DEFAULT_URL, realm, kind, info);
+                AuthorizationHandler.addAuthorizationInfo(DEFAULT_URL, realm, kind, info);
             } catch (CoreException e) {
             }
         }
 
         public byte[] loadFingerprints(String realm) {
-            Map info = Platform.getAuthorizationInfo(DEFAULT_URL, realm, "svn.ssh.server");
+            Map info = AuthorizationHandler.getAuthorizationInfo(DEFAULT_URL, realm, "svn.ssh.server");
             if (info != null && realm.equals(info.get("svn:realmstring"))) {
                 return (byte[]) info.get("hostkey");
             }
@@ -183,7 +183,7 @@ public class EclipseSVNAuthenticationManager extends DefaultSVNAuthenticationMan
             info.put("svn:realmstring", realm);
             info.put("hostkey", fingerprints);
             try {
-                Platform.addAuthorizationInfo(DEFAULT_URL, realm, "svn.ssh.server", info);
+                AuthorizationHandler.addAuthorizationInfo(DEFAULT_URL, realm, "svn.ssh.server", info);
             } catch (CoreException e) {
             }
         }
