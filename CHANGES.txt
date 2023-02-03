@@ -1,3 +1,9 @@
+== version 1.10.10  ==
+
++ SVNKIT-771: Use more recent authorization API of Eclipse.
++ Apache SSHD related libraries are now be embeded into SVNKit OSGi artifact (fixes in Eclipse support).
++ SVNKIT-770: Support "aarch64" (M1) architecture for Mac.
+
 == version 1.10.9  ==
 
 + SQLJet library: GPL v3 License file and copyright notice added.
